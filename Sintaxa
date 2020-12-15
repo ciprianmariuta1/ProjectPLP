@@ -1,0 +1,104 @@
+Include Nat.
+Require Import Omega.
+Set Nested Proofs Allowed.
+
+Require Import Strings.String.
+Local Open Scope string_scope.
+
+Scheme Equality for string.
+
+Inductive Var := n | i | x | sum.
+
+(* Expresii aritmetice *)
+Inductive AExp :=
+| aint : nat -> AExp
+| avar : string -> AExp
+| aplus : AExp -> AExp -> AExp
+| aminus : AExp -> AExp -> AExp
+| amul : AExp -> AExp -> AExp
+| adiv : AExp -> AExp -> AExp
+| amod : AExp -> AExp -> AExp.
+
+Coercion aint : nat >-> AExp.
+Coercion avar : string >-> AExp.
+
+Notation "A +' B" := (aplus A B) (at level 60, right associativity).
+Notation "A -' B" := (aminus A B) (at level 60, right associativity).
+Notation "A *' B" := (amul A B) (at level 58).
+Notation "A /' B" := (adiv A B) (at level 58).
+Notation "A %' B" := (amod A B) (at level 57).
+
+
+
+
+
+(* Expresii booleene *)
+Inductive BExp :=
+| btrue : BExp
+| bfalse : BExp
+| beq : AExp -> AExp -> BExp
+| blt : AExp -> AExp -> BExp
+| ble : AExp -> AExp -> BExp
+| bnot : BExp -> BExp
+| band : BExp -> BExp -> BExp
+| bor : BExp -> BExp -> BExp.
+
+Notation "! A" := (bnot A) (at level 54).
+Notation "A ==' B" := (beq A B) (at level 53).
+Notation "A <' B" := (blt A B) (at level 53).
+Notation "A <=' B" := (ble A B) (at level 53).
+
+Notation "A '&&'' B" := (band A B) (at level 55).
+Notation "A '||'' B" := (bor A B) (at level 55).
+
+(* Structuri *)
+Inductive Stmt :=
+| assignment : string -> AExp -> Stmt
+| declarenovalue : string -> Stmt
+| declare : string -> AExp -> Stmt
+| sequence : Stmt -> Stmt -> Stmt
+| ifthen : BExp -> Stmt -> Stmt
+| ifelse : BExp -> Stmt -> Stmt -> Stmt
+| whiledo : BExp -> Stmt -> Stmt
+| fordo : Stmt -> BExp -> Stmt -> Stmt -> Stmt.
+
+Notation "'declare' A" := (declarenovalue A) (at level 50).
+Notation "'declare' A '=' B" := (declare A B) (at level 50).
+Notation "X ::= A" := (assignment X A) (at level 50).
+Notation "S1 ;; S2" := (sequence S1 S2) (at level 90).
+Notation "'Iff' A 'Then' B" := (ifthen A B) (at level 90).
+Notation "'If' A 'Then' B 'Else' C" := (ifelse A B C) (at level 90).
+Notation "'While' '(' A ')' '(' B ')'" := (whiledo A B) (at level 90).
+Notation "'For' '(' A ; B ; C ')' '(' D ')'" := (fordo A B C D) (at level 90). 
+
+
+(* Functii predefinite *)
+Inductive Functii :=
+| Max : AExp -> AExp -> Functii
+| Min : AExp -> AExp -> Functii
+| Eq : AExp -> AExp -> Functii
+| Pow : AExp -> AExp -> Functii.
+
+Notation "'Max' '(' A , B ')'" := (Max A B) (at level 50).
+Notation "'Min' '(' A , B ')'" := (Min A B) (at level 50).
+Notation "'Eq' '(' A , B ')'" := (Eq A B) (at level 50).
+Notation "'Pow' '(' A , B ')'" := (Pow A B) (at level 57).
+
+Check (Max(6, 9)).
+Check (Min(9, 12)).
+Check (Eq(23 +' 56 *' 2, 88 /' 2 -' 12)).
+Check (Pow(5, 9)).
+
+(* Vectori *)
+Inductive Array :=
+| vid : string -> Array
+| single : string -> nat -> Array
+| multiple : string -> Array -> nat -> Array.
+
+Notation " a '[' ']' " := (vid "a") (at level 20).
+Notation " a '[' A ']' " := (single "a" A) (at level 20).
+Notation " b '[' a ',' A ']' " := (multiple "b" a A) (at level 20).
+
+Check (a[]).
+Check (a[5]).
+Check (b[a[7],90]).
