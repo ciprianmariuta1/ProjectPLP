@@ -186,7 +186,7 @@ Definition update (env : Env) (s : string) (value : nat) : Env :=
   fun x => if (eqb x s)
               then value
               else env x.
-
+(*
 Reserved Notation "A =[ S ]=> N" (at level 65).
 Inductive aeval : AExp -> Env -> nat -> Prop :=
 | const : forall n sigma, aint n =[ sigma ]=> n
@@ -309,7 +309,7 @@ Inductive eval : Stmt -> Env -> Env -> Prop :=
     fordo e1 e2 e3 s -{ sigma }-> sigma'
 where "s -{ sigma }-> sigma'" := (eval s sigma sigma').
 
-
+*)
 
 
 
